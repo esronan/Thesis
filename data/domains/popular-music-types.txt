@@ -1,0 +1,66 @@
+acid jazz
+acid rock
+ambient
+bebop
+bhangra
+bluebeat
+bluegrass
+blues
+boogie-woogie
+bop
+Cajun
+calypso
+country and western
+country blues
+country rock
+Cu-bop
+death metal
+disco
+Dixieland
+doo-wop
+dub
+electropop
+folk music
+free jazz
+funk
+fusion
+gangsta rap
+glam rock
+gospel
+Goth
+grunge
+hardcore
+harmolodics
+heavy metal
+hip-hop
+jazz
+jungle
+modern jazz
+Motown
+Muzak
+New Age
+New Country
+New Orleans jazz
+pop
+psychobilly
+punk
+ragga
+rap
+rave
+reggae
+rhythm and blues
+rock
+rockabilly
+rock and roll
+salsa
+ska
+skiffle
+soul
+surf music
+swing
+swingbeat
+techno
+thrash metal
+trad jazz
+world music
+zydeco

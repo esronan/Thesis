@@ -1,0 +1,16 @@
+Bicycle
+Limousine
+Motorcycle
+Skateboard
+Car
+Truck
+Minivan
+Bus
+Train
+Ferry
+Liner
+Steamer
+Tram
+Airplane
+Aeroplane
+Van

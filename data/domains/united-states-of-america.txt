@@ -1,0 +1,9 @@
+Democratic Party
+Republican Party
+politics: Northern Ireland, nearby word of politics: United States of America
+politics: South Africa, nearby word of politics: United States of America
+politics: United Kingdom (Mainland), nearby word of politics: United States of America
+Popes, nearby word of politics: United States of America
+port: Main British and Irish ports, nearby word of politics: United States of America
+port: Major ports of the world, nearby word of politics: United States of America
+Mardi Gras

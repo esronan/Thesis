@@ -1,0 +1,84 @@
+Alabama
+Alaska
+AK
+Arizona
+Ariz.
+Arkansas
+California
+Colorado
+Colo.
+Connecticut
+Delaware
+District of Columbia
+DC
+Florida
+Fla.
+Georgia
+Hawaii
+Idaho
+Illinois
+Indiana
+Iowa
+Ia. or Io.
+Kansas
+Kan. or Kans.
+KS
+Kentucky
+Louisiana
+Maine
+Maryland
+Massachusetts
+Minnesota
+Minn.
+Mississippi
+Missouri
+Montana
+Mont.
+Nebraska
+Nevada
+Nev.
+NV
+New Hampshire
+NH
+New Jersey
+NJ
+New Mexico
+New York
+NY
+North Carolina
+North Dakota
+Ohio
+Oklahoma
+Okla.
+OK
+Oregon
+Oreg.
+Pennsylvania
+Rhode Island
+RI
+South Carolina
+South Dakota
+Tennessee
+Tenn.
+Texas
+TX
+Utah
+Vermont
+Vt.
+Virginia
+Washington
+WA
+West Virginia
+WV
+Wisconsin
+WI
+Wyoming
+Wyo.
+WY
+state: Australian States and Territories, nearby word of state: US States
+state: Indian states, nearby word of state: US States
+state: Indian Union territories, nearby word of state: US States
+sugar: Biochemical sugars, nearby word of state: US States
+sugar: Edible sugars, nearby word of state: US States
+Suits, nearby word of state: US States
+Mardi Gras

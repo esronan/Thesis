@@ -1,0 +1,97 @@
+adobe
+apartment
+bachelor apartment(Canadian)
+barrack
+bedsitter
+black house (Scottish)
+board-and-shingle (Caribbean)
+boarding house
+booth
+bungalow
+bunker
+but and ben (Scottish)
+cabin
+caboose (Canadian)
+camboose
+Cape Cod cottage
+caravan
+castle
+chalet
+chattel house
+consulate
+cot or cote (dialect)
+cottage
+cottage flat
+crannog
+croft
+dacha(Russian)
+deanery
+digs
+duplex or duplex apartment (US, Canadian)
+embassy
+farmhouse
+flat
+flatlet
+flophouse
+flotel
+garret
+grange
+guest house
+hacienda
+hall
+hogan
+hostel
+hotel
+house
+houseboat
+hovel
+hut
+igloo or iglu
+inn
+lake dwelling
+lodge
+log cabin
+long house
+maisonette
+manor
+manse
+mansion
+mattamore
+mews (informal)
+mobile home
+motel
+motor caravan
+mud hut
+palace
+parsonage
+penthouse
+pied-à-terre
+prefab
+priory
+ranch
+rath (Irish)
+rectory
+rest-home
+roadhouse
+semi
+shack
+shanty
+shooting box
+show house
+single-end (Scottish, dialect)
+slum
+starter home
+stately home
+studio flat
+tavern
+tenement
+tent
+tepee
+town house
+trailer (US, Canadian)
+tree house
+tupik or tupek (Canadian)
+vicarage
+villa
+whare (New Zealand)
+wigwam
