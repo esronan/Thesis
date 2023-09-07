@@ -1157,13 +1157,9 @@ class AllDecsIterator():
                     self.word_charts_through_time(domain=domain, domain_dic=domain_dic, dom_type=dom_type, dim_1=dim_1, dim_2=dim_2, title=False)
                 # print(f"{fname} SAVED")
 
-# 
-# Input:
-# Output:
-
 
 class EvalEmbeddings():
-    # self.evals to access evaluation scores
+    '''Initialize evaluator'''
     def __init__(self, dir, files, kv, dl=False):
         self.fils = files
         self.dl = dl
