@@ -31,12 +31,21 @@ import scipy.stats as st
 import random
 from matplotlib import cm
 
+
+# Load word embeddings
+# Input: fil = filename in text, input_dir = directory in text
+# Output: full model embeddings if kv=False, just numerical vectors if True
+
 def load_wv(fil, input_dir, kv=False):
     fil = input_dir + fil
     if kv==True:
         return KeyedVectors.load(fil)
     else:
         return gensim.models.Word2Vec.load(fil).wv
+
+# Load word embeddings for a decade range into a dictionary
+# Input: fils = list of filenames, input_dir = directory in text
+# Output: Dictionary of word embeddings sorted by decade keys
 
 def load_wvs(fils, input_dir, kv=False):
     wvs = {}
@@ -45,11 +54,20 @@ def load_wvs(fils, input_dir, kv=False):
         wvs[decade] = wv
     return wvs
 
+
+# Load oppositional words to create dimension vectors with
+# Input: fname = fileame in text
+# Output: dictionary with each key matched with its opposite word as value
+
 def load_domain_dic(fname):
     df = pd.read_excel(fname).T
     dic = {x[0]: [y for y in x[1:] if not pd.isna(y)] for x in df.itertuples(index=True)}
     return dic
-    
+
+# Find angle between two vectors
+# Input: v1 & v2 = np vectors or lists
+# Output: angle in cos
+
 def vector_angle(v1, v2):
     v1_norm = v1/np.linalg.norm(v1)
     v2_norm = v2/np.linalg.norm(v2)
@@ -57,14 +75,27 @@ def vector_angle(v1, v2):
     angle = np.arccos(dot)
     return angle
 
+# Check words and corresponding indices
+# Input: Word embeddings from load_wv
+# Output: Printed list of first 10 words and indices
+
 def check_words(wv):
     for index, word in enumerate(wv.index_to_key):
         if index == 10:
             break
         print(f"word #{index}/{len(wv.index_to_key)} is {word}")
 
+
+# Calculate similraity between two vectors
+# Input: wv = load_wv output, two vectors as text
+# Output: Printed similarity
+
 def calc_similarity(wv, w1, w2):
     print(f"Similarity between {w1} and {w2}: ", wv.similarity(w1, w2))
+
+# Create a dimension in space from a dictionary of opposite words
+# Input: wv = load_wv output, ant_df = pandas DF of antonyms
+# Output: normalized dimension vector
 
 def create_dim(wv, ant_df, print_miss=False, eval=False):
     dims = ant_df.shape
@@ -98,6 +129,14 @@ def create_dim(wv, ant_df, print_miss=False, eval=False):
     if print_miss == True:
         print(f"No. antonyms: {len(diffs)}.\nNot present in vocab: {missing}")
     return norm_dimension
+
+# 
+# Input:
+# Output:
+
+# Create a dimension in space from a dictionary of opposite words, with included evaluations of resultant vector
+# Input: wv = load_wv output, ant_df = pandas DF of antonyms
+# Output: normalized dimension vector, evaluation of antonmy and synonym distances
 
 def create_dim_avg(wv, ant_df, print_miss=False, eval=False):
     dims = ant_df.shape
@@ -145,24 +184,34 @@ def create_dim_avg(wv, ant_df, print_miss=False, eval=False):
 
     return norm_dimension
 
-def vector_angle(v1, v2):
-    v1_norm = normify_vec(v1)
-    v2_norm = normify_vec(v2)
-    dot = np.dot(v1_norm, v2_norm)
-    angle = np.arccos(dot)
-    return angle
+
+# Normalize a matrix
+# Input: Matrix
+# Output: Normalized matrix
 
 def normify_matrix(matrix):
     for i, row in enumerate(matrix):
         matrix[i] = row/np.linalg.norm(row)
     return matrix
 
+# Normalize a vector
+# Input: Vector
+# Output: Normalized vector
+
 def normify_vec(vec):
     return vec/(np.sqrt(np.nansum(np.square(vec))))
     return vec/np.linalg.norm(vec)
 
+# Find the projection of a dimension on a normalised matrix
+# Input: dimension vector, normalised matrix
+# Output: Projected vector
+
 def proj_dim(dim, norm_matrix):
     return np.dot(norm_matrix, dim)
+
+# Show two projections of a domain word list on two dimension vectors
+# Input: proj_1 & proj_2 = dimensions, p1_label & p2_label = corresponding text labels, word_list = list of words, dim_1_span & dm_2_span = custom range for chart
+# Output: Chart of projections and saed file
 
 def chart_project(proj_1, p1_label, proj_2, p2_label, title, word_list, wv, dim_1_span, dim_2_span, show=True):
     inds = []
@@ -197,6 +246,10 @@ def chart_project(proj_1, p1_label, proj_2, p2_label, title, word_list, wv, dim_
     plt.savefig(title, format="png")
     if show == False:
         plt.clf()
+
+# 
+# Input:
+# Output:
 
 def corr_project_dict(proj_1, proj_2, title, domain_dic, wv):
     inds = []
@@ -290,6 +343,10 @@ def chart_project_dict(proj_1, p1_label, proj_2, p2_label, title, domain_dic, wv
     if show == False:
         plt.clf()
 
+# Get the subcategories from a wikipedia category page
+# Input: Page title
+# Output: A list of words
+
 def wiki2words(page):
     words = wikipedia.page(page).links
     words_1gram = []
@@ -301,9 +358,17 @@ def wiki2words(page):
             words_1gram.append(word)
     return words_1gram
 
+# Tag an n-gram
+# Input: A single word in text
+# Output: The tag with the highest probability
+
 def uni_tagger(word, multiple=False):
     return nltk.pos_tag([word])[0][1]
     return unitagger.tag([word])[0][1]
+
+# Tag an n-gram using Wordnet
+# Input: A single word in text
+# Output: The tag with the highest probability
 
 def wn_tagger(word, multiple=True):
     if multiple==True:
@@ -311,9 +376,12 @@ def wn_tagger(word, multiple=True):
         return poses
     return wn.synsets(word)[0].pos()
 
+#  Finds most similar words and splits them according to tag, returning dict of tag: [list of words],select can be defined so as to only return certain word types
+# Input: word = word in text, wv = word embeddings, tagger = desired tagger in text, inc_val = whether similarity socre included
+# Output: Most similar tags for a word
+
 def most_similar_tag(word, wv, tagger, inc_val=False, dim=False, topn=100, selectn=10, select=False): 
-    '''Finds most similar words and splits them according to tag, returning dict of tag: [list of words],
-    select can be defined so as to only return certain word types'''
+   
     #FIX: ADD MULTIPLE WORD TYPES - if multiple word meanings, add to al lists
     if dim == True:
         pos = []
@@ -375,11 +443,11 @@ def most_similar_tag(word, wv, tagger, inc_val=False, dim=False, topn=100, selec
         pass
     return words
 
+# Finds all most similar words that are within a defined list. 
+# Input: word= 2-tuple of lists (pos, neg) if wanting dimension (dim=True), else one word.topn = top n similar words, selectn = amount of top words returned
+# Output: list of tuples of (word, similarity score)
+
 def most_similar_wlist(word, wv, word_list, inc_val=False, dim=False, topn=100, selectn=10): 
-    '''Finds all most similar words that are within a defined list.
-    Input: word= 2-tuple of lists (pos, neg) if wanting dimension (dim=True), else one word.
-    topn = top n similar words, selectn = amount of top words returned
-    returns list of tuples of (word, similarity score)'''
     #print(f"5 most similar to {w1}: ", wv.most_similar(positive=[word], topn=n))
     if dim == True:
         pos = []
@@ -417,8 +485,11 @@ def most_similar_wlist(word, wv, word_list, inc_val=False, dim=False, topn=100, 
     #print("Words not present in embeddings:", not_pres)
     return words
 
+# measure the spread of a domain of words in  word embeddings, the result can be used to compare contraction and expansion
+# Input: wv=word vectors, norm_matrix = normalised matrix, word_list = list of words
+# Output: the mean distance between all the words
+
 def measure_word_space(wv, norm_matrix, word_list): 
-    #measure the contraction or expansion of a word space, this does one word embedding space at a time
     for i, word in enumerate(word_list):
         try:
             vec = wv[word.lower()].reshape(1,300)
@@ -436,9 +507,11 @@ def measure_word_space(wv, norm_matrix, word_list):
         norms.append(norm)
     return np.mean(norms)
 
+# Calculate the most associated words (& hence stereotypes) of a word through time
+# Input: wvs is an ordered dict, domain_list is a list of words, type is type of tagging, select is specifics of tag
+# Output: Dataframe with the top n associated words with target word through decades in question
+
 def stereotype_through_time(wvs, word, word_list, type="tag", inc_val=False, select="JJ", selectn=10, topn= 100): #INCOMPLETE
-    '''wvs is an ordered dict, domain_list is a list of words, type is type of tagging, 
-    select is specifics of tag'''
     stereotypes = {decade: {} for decade, wv in wvs.items()}
     if type == "tag":
         df = {}
@@ -460,6 +533,10 @@ def stereotype_through_time(wvs, word, word_list, type="tag", inc_val=False, sel
     df = pd.DataFrame(df)
     return df
 
+# Get the most similar words to a target word
+# Input: wv = word embeddings, norm_matrix = normalised matrix of embeddings, word = target word
+# Output: list of tuples of vocab and vector
+
 def get_most_similar(wv, norm_matrix, word):
     vocab = wv.index_to_key
     distance_vecs = norm_matrix - np.array(normify_vec(wv[word])).reshape(1,300)
@@ -467,6 +544,10 @@ def get_most_similar(wv, norm_matrix, word):
     args = list(np.argsort(norms, axis=0))
     sorted_vocab = [(vocab[ind], norm_matrix[ind]) for ind in args]
     return sorted_vocab
+
+# Generate chart demonstrating line of projection average of a word list on each dimension through time
+# Input: class_obj = loaded iterator underneath, wlist = word list in question
+# Output: Line graph of projections of a domain on each dimension through time
 
 def aggregate_word_line_graph(class_obj, wlist): #Can also be used for a single word if that single word is a single element in a list
     wlist_projs  = {dim: {dec: [] for dec, wv in class_obj.wvs.items()} for dim in class_obj.dims}
@@ -495,6 +576,10 @@ def aggregate_word_line_graph(class_obj, wlist): #Can also be used for a single 
     plt.rcParams["figure.figsize"] = (10,5)
     df.plot.line()
 
+# Generate polar graph for a word list's projection on each dimension for each decade
+# Input: class_obj = loaded iterator underneath, wlist = word list in question
+# Output: Polar graph of projections of a domain on each dimension through time
+
 def polar_graph(class_obj, wlist): #Can also be used for a single word if that single word is a single element in a list
     wlist_projs  = {dim: {dec: [] for dec, wv in class_obj.wvs.items()} for dim in class_obj.dims}
     word_projs = {dim: {} for dim in class_obj.dims}
@@ -520,6 +605,8 @@ def polar_graph(class_obj, wlist): #Can also be used for a single word if that s
                         color_discrete_sequence=px.colors.sequential.Plasma_r,
                         template="ggplot2")
 
+#  Append list support function for PCA
+
 def append_list(sim_words, words):
     #Code modified from original located at: https://towardsdatascience.com/visualizing-word-embedding-with-pca-and-t-sne-961a692509f5
     
@@ -533,6 +620,8 @@ def append_list(sim_words, words):
         list_of_words.append(sim_words_tuple)
         
     return list_of_words
+
+#  Prepare variables support function for PCA
 
 def prep_vars(input_list):
     #Code modified from original located at: https://towardsdatascience.com/visualizing-word-embedding-with-pca-and-t-sne-961a692509f5
@@ -560,6 +649,8 @@ def prep_vars(input_list):
     label_dict = dict([(y,x+1) for x,y in enumerate(set(labels))])
     color_map = [label_dict[x] for x in labels]
     return similar_word, labels, label_dict, color_map
+
+# Display PCA scatterplot - not used
 
 def display_pca_scatterplot_3D(model, user_input=None, words=None, label=None, color_map=None, similars=True, topns=5, sample=10):
     #Code modified from original located at: https://towardsdatascience.com/visualizing-word-embedding-with-pca-and-t-sne-961a692509f5
@@ -678,6 +769,8 @@ def display_pca_scatterplot_3D(model, user_input=None, words=None, label=None, c
     plot_figure = go.Figure(data = data, layout = layout)
     plot_figure.show()
 
+# 2D PCA scatterplot - not used
+
 def display_pca_scatterplot_2D(model, user_input=None, words=None, label=None, color_map=None, similars=True, topns=5, sample=10):
     #Code modified from original located at: https://towardsdatascience.com/visualizing-word-embedding-with-pca-and-t-sne-961a692509f5
 
@@ -792,6 +885,10 @@ def display_pca_scatterplot_2D(model, user_input=None, words=None, label=None, c
     plot_figure = go.Figure(data = data, layout = layout)
     plot_figure.show()
 
+# Generate polar graph for a word list's projection on each dimension for each decade
+# Input: iter_obj = loaded iterator underneath, wlist = word list in question
+# Output: Polar graph of projections of a domain on each dimension through time
+
 def polar_chart(iter_obj, wlist):
     wlist_projs  = {dim: {dec: [] for dec, wv in iter_obj.wvs.items()} for dim in iter_obj.dims}
     word_projs = {dim: {} for dim in iter_obj.dims}
@@ -821,6 +918,9 @@ def polar_chart(iter_obj, wlist):
 
 
 
+# Class object to load all word embeddings and perform necessary analyses
+# Input: coll = specific word embeddings collection, dims = list of dimensions, kv = True or False, depending on whether full Word2Vec model or only vectors available,
+
 class AllDecsIterator():
     def __init__(self, coll, dims, kv, test=False):
         self.coll = coll
@@ -828,8 +928,11 @@ class AllDecsIterator():
         self.stereotypes = {}
         self.test=test
         self.kv = kv
-        
+    
+    
     def iterate(self):
+        '''Iterate through all decades and calculate necessary information
+        e.g. dimensions through time, projections of words upon them, angles between dimensions'''
         self.input_dir = f"D:/google_ngrams/vectors/{self.coll}/"
         decades_dict = OrderedDict()
         if self.test == True:
@@ -922,6 +1025,7 @@ class AllDecsIterator():
         return pd.DataFrame(diffs) 
     
     def avg_distance(self, n=50): #e.g. self.norm_matrix["decade"]
+        '''Calculate average distance between random words in word embeddings space'''
         print("Calculating average distance...")
         self.dists = {dec:[] for dec, wv in self.wvs.items()}
         for dec, norm_matrix in self.norm_matrix.items():
@@ -935,7 +1039,8 @@ class AllDecsIterator():
         return self.dists
              
     def stereotype_through_time(self, word, word_list=[], type="tag", inc_val=False, select="a", selectn=10, topn= 100): #INCOMPLETE
-        '''wvs is an ordered dict, domain_list is a list of words, type is type of tagging, 
+        '''Calculate the most associated words (& hence stereotypes) of a word through time. 
+        wvs is an ordered dict, domain_list is a list of words, type is type of tagging, 
         select is specifics of tag'''
         self.stereotypes[word] = {}
         if type == "tag":
@@ -969,7 +1074,8 @@ class AllDecsIterator():
         self.stereotypes[word] = df
     
     def word_charts_through_time(self, domain, domain_dic, dim_1, dim_2, dom_type="word_list", title=False):
-        '''dims = list of two strings which refer to dimensions to be projected on'''
+        '''Create projection graphs of a set of words on two specified cultural dimensions,
+        dims = list of two strings which refer to dimensions to be projected on'''
         try:
             os.makedirs(f"G:/My Drive/KU/Thesis/Outputs/Graphs/{domain}_{dim_1}_{dim_2}")
         except Exception as e:
@@ -1051,6 +1157,10 @@ class AllDecsIterator():
                     self.word_charts_through_time(domain=domain, domain_dic=domain_dic, dom_type=dom_type, dim_1=dim_1, dim_2=dim_2, title=False)
                 # print(f"{fname} SAVED")
 
+# 
+# Input:
+# Output:
+
 
 class EvalEmbeddings():
     # self.evals to access evaluation scores
@@ -1064,6 +1174,7 @@ class EvalEmbeddings():
         self.kv = kv
 
     def load_wv(self, fil):
+    '''Load word embeddings'''
         #True for external models that need downloading
         if self.dl == False:
             #For if model stored in KeyedVectors format
@@ -1086,10 +1197,12 @@ class EvalEmbeddings():
             print("Loading finished.")
             return model
     def save(self, fname):
+    '''Save evaluations dataframe'''
         self.df = pd.DataFrame(self.evals)
         self.df.to_csv("G:/My Drive/KU/Thesis/outputs/evals/" + fname)
         
     def iterate(self, kv=False):
+    '''Iterate through all files and evaluate them'''
         for fil in self.fils:
             wv = self.load_wv(fil)
             if wv == 0: #load_wv returns wv if embeddings don't exist
@@ -1099,6 +1212,7 @@ class EvalEmbeddings():
         self.evals_df = pd.DataFrame(self.evals)
                
     def eval_embed(self, fil):
+        '''Evaluate one set of word embeddings'''
         self.evals[fil] = {}
         print(f"\n*****Starting evaluation for {fil}*****")
         
@@ -1123,6 +1237,7 @@ class EvalEmbeddings():
         print(f"{fil} embeddings evaluated.\n")
     
     def create_dim(self, model, df):
+    '''Create a cultural dimension out of a dataframe of antonyms'''
         dims = []
         for row in df.iterrows():
             cols = df.columns
@@ -1134,11 +1249,13 @@ class EvalEmbeddings():
         return final_dim
 
     def proj_dim(self, model, dim):
+    '''Project embeddings on cultural dimension'''
         embed = self.models[model].get_normed_vectors()
         proj = np.dot(embed, dim)
         return proj
     
     def corr_gss(self, model,table=False):
+        '''Correlate projections of music genres and leisure activities with the General Social Survey'''
         survey = pd.read_csv(f"G:/My Drive/KU/Thesis/data/survey_data/gss_averages.csv", index_col = "capital")
         music_genres_conv = {"bigband": "big-band","blugrass": "bluegrass", "country": "country", "blues": "blues", "musicals": "musicals", "classicl": "classical", "folk": "folk", "gospel": "gospel", "jazz": "jazz", "latin": ["salsa", "samba", "bachata", "kilomba", "tango", "rumba", "bolero"], "moodeasy": "easy-listening", "newage": ["new-age", "newage"], "opera": "opera", "rap": "rap", "reggae": "reggae", "conrock": "rock", "oldies": "oldies", "hvymetal": "heavy-metal"}
         music_genres_conv = {"bigband": "big-band","blugrass": "bluegrass", "country": "country", "blues": "blues", "musicals": "musicals", "classicl": "classical", "folk": "folk", "gospel": "gospel", "jazz": "jazz", "latin": "salsa", "moodeasy": "easy-listening", "newage": "new-age", "opera": "opera", "rap": "rap", "reggae": "reggae", "conrock": "rock", "oldies": "oldies", "hvymetal": "heavy-metal"}
@@ -1217,6 +1334,7 @@ class EvalEmbeddings():
         return corrs
         
     def corr_gbcs(self, model, table=False):
+        '''Correlate projections of music genres and leisure activities with the Great British Class Survey'''
         survey = pd.read_csv("G:/My Drive/KU/Thesis/data/survey_data/gbcs_averages.csv", index_col = 0)
         activities_conv = {"carts":"gallery", "cbingo":"bingo", "csportw":"sport", "ctheatre":"theatre", 
                 "copera":"opera", "cdance":"dance","cmags":"magazine", "cdiy":"diy", 
@@ -1297,6 +1415,7 @@ class EvalEmbeddings():
         return corrs
 
     def corr_census(self, model, labels="words", outliers=[], table=False):
+        '''Correlate occupation projections on cultural dimensions with actual mean earnings, social status and educational level from US census'''
         survey = pd.read_csv("G:/My Drive/KU/Thesis/data/us_census/census_1990_OCC1950.csv", index_col = 0)
         occ_map = pd.read_csv("G:/My Drive/KU/Thesis/data/garg/occupation_map.csv", index_col="Occupation, 1950 basis").to_dict()["Single words"]
                            
@@ -1388,6 +1507,7 @@ class EvalEmbeddings():
 
               
         def corr_census_old(self, model, dec):
+            '''Old version, not in use'''
             survey = pd.read_csv(f"G:/My Drive/KU/Thesis/data/us_census/census_{dec}_OCC1950.csv", index_col = 0)
             occ_map = pd.read_csv("G:/My Drive/KU/Thesis/data/garg/occupation_map.csv", index_col="Occupation, 1950 basis").to_dict()["Single words"]
                                
@@ -1442,6 +1562,7 @@ class EvalEmbeddings():
         return corrs
                         
     def corr_survey(self, model):
+        '''Correlate projections of a set of key words with the word association results from Kozlowski's Mechanical Turk survey'''
         survey = pd.read_csv("G:/My Drive/KU/Thesis/data/survey_data/survey_means_weighted.csv")
         survey = survey.rename(columns= {"Unnamed: 0": "words"})
         survey = survey.set_index("words")
@@ -1544,9 +1665,17 @@ class EvalEmbeddings():
                # corrs
         return corrs
 
+# 
+# Input:
+# Output:
+
 def to_latex(df, title):
     df.to_latex(f"G:/My Drive/KU/Thesis/outputs/tables/{title}.tex")
 
+
+# 
+# Input:
+# Output:
 
 def get_projection_corrs(self, input_words, p_val=False):
     if input_words == "top words":
@@ -1620,6 +1749,10 @@ def get_projection_corrs(self, input_words, p_val=False):
                     self.proj_corrs[dim][dec1][dec2] = pearsonr(projs1, projs2)
                 else:
                     self.proj_corrs[dim][dec1][dec2] = pearsonr(projs1, projs2)[0]
+
+# 
+# Input:
+# Output:
 
 def plot_projection_corrs(self, n,k, save=None):
     fig, ax = plt.subplots(nrows=int((n+(k/2))//k), ncols=k, figsize = (15*k,15*int((n+(k/2))//k)))
